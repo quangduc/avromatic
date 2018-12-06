@@ -60,7 +60,11 @@ module Avromatic
         # Allow this code to be used with an official Avro release or the
         # avro-patches gem that includes logical_type support.
         if readers_schema.respond_to?(:logical_type)
-          readers_schema.type_adapter.decode(datum)
+          if readers_schema.logical_type == 'decimal'
+            readers_schema.type_adapter.decode(datum, readers_schema.precision, readers_schema.scale)
+          else
+            readers_schema.type_adapter.decode(datum)
+          end
         else
           datum
         end
